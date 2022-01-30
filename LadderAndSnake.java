@@ -65,21 +65,6 @@ public class LadderAndSnake {
 		return (int)(Math.random() * 6 + 1);
 	}
 	
-	public void printDice() {
-		
-	}
-	
-//	public void printPlayers(Player player) {
-//		if (player.getPosition() > 100) {
-//			player.setPosition(200 - player.getPosition());
-//			System.out.print("; back to square " + player.getPosition());
-//		}
-//		else {
-//			System.out.print("; now in square " + player.getPosition());
-//		}
-//		checkPosition(player);
-//		System.out.println();
-//	}
 	
 	public void flipPlayers(Player[] players) {
 		for (int i = 0; i < players.length; i++) {
@@ -96,6 +81,13 @@ public class LadderAndSnake {
 				break;
 			}
 		}
+		System.out.println();
+		
+		//System.out.println();
+		printPlayerPosition();
+		
+		drawBoard();
+		resetBoard();
 	}
 	
 	public void movePlayer(Player player, int diceValue) {
@@ -189,7 +181,7 @@ public class LadderAndSnake {
 		int pos = player.getPosition(); 
 		int posOdd;
 		int posEven;
-		resetBoard();
+		//resetBoard();
 		for (int i = 0, j = 9; j >= 0; i += 10, j--) {
 			posOdd = pos - (i + 1);
 			posEven = i + 10 - pos;
@@ -207,6 +199,31 @@ public class LadderAndSnake {
 				}
 			}
 		}
+//		for (int i = 0; i < 10; i++) {
+//			for (int j = 0; j < 10; j++) {
+//				if (playerBoard[i][j] == "P1") {
+//					System.out.println("P1 is at: " + i + ", " + j);
+//					break;
+//				}
+//				if (playerBoard[i][j] == "P2") {
+//					System.out.println("P2 is at: " + i + ", " + j);
+//					break;
+//				}
+//				if (playerBoard[i][j] == "P3") {
+//					System.out.println("P3 is at: " + i + ", " + j);
+//					break;
+//				}
+//				if (playerBoard[i][j] == "P4") {
+//					System.out.println("P4 is at: " + i + ", " + j);
+//					break;
+//				}
+//			}
+//		}
+		
+	}
+	
+	// test purpose
+	public void printPlayerPosition() {
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
 				if (playerBoard[i][j] == "P1") {
@@ -227,7 +244,6 @@ public class LadderAndSnake {
 				}
 			}
 		}
-		//System.out.println(playerBoard[5][9]);
 	}
 	
 	public void resetBoard() {
@@ -239,6 +255,7 @@ public class LadderAndSnake {
 	}
 	
 	public void drawBoard() {
+		numBoard = 101;
 		for (int i = 0; i < 30; i++) {
 			if (i % 6 == 0) {
 				for (int j = 0; j < 10; j++) {
@@ -258,33 +275,49 @@ public class LadderAndSnake {
 				System.out.println();
 				numBoard -= 10;
 			}
-			else if (i == 1) {
-				System.out.print("\t\t\t" + "  P3" + "\t\t" + "  P1" + "\t\t" + "  P4");
-				System.out.println();
+			else if (i == 28) {
+				System.out.print("  ");
+				for (int k = 0; k < 10; k++) {
+					if (playerBoard[k][9] == null) {
+						System.out.print("        ");
+					}
+					else {
+						System.out.print(playerBoard[k][9] + "      ");
+					}
+				}
 			}
+//			else if (i == 1) {
+//				System.out.print("\t   \t\t" + "  P3" + "\t\t" + "  P1" + "\t\t" + "  P4");
+//				System.out.println();
+//			}
 			else {
 				System.out.println();
 			}
 			
 		}
+		System.out.println();
 	}
 	
 	
 	public void play() {
+		printWelcomeMessage();
 		createPlayers();
 		playerOrder();
 		int count = 0;
 		Scanner keyIn = new Scanner(System.in);
 		
 		while (!gameover) {
-			System.out.print("\nType anything to continue: ");
+			System.out.println("\nPlease enter 1 or any key to continue.");
+			System.out.print("If you would like to quit, please enter 0: ");
 			int enter = keyIn.nextInt();
 			if (enter == 0) {
 				gameover = true;
 				break;
 			}
 			else {
-				System.out.println("\nTurn " + ++count + "\n");
+				System.out.println("\n\nTurn " + ++count + ":\n");
+				//drawBoard();
+				//System.out.println();
 				flipPlayers(players);
 				//checkPosition(players);
 			}
@@ -304,19 +337,24 @@ public class LadderAndSnake {
 		gameover = true;
 	}
 	
-	public String toString() {
-		String a = "";
-		// draw map and num of turn
-		return a;
+	public void printWelcomeMessage() {
+		System.out.println("--------------------------------------------------------");
+		System.out.println("      Welcome to Ladder and Snake Game!");
+		System.out.println("--------------------------------------------------------");
 	}
 	
 	
+	
+	
+	// Determine Order of players
 	public void playerOrder() {
 		boolean duplicates = true;
 		
-		printPlayerOrder();
+		System.out.println("Now deciding which player will start playing, players will flip their dice:\n");
+		printPlayerScore();
 		sortArray();
 		printPlayerOrder();
+		//printPlayerScore();
 		
 		while (duplicates) {
 			outer:
@@ -328,7 +366,11 @@ public class LadderAndSnake {
 							players[k].setPlayerScore(players[k].getPlayerScore() * 10 + flipDice());
 						}
 						
+						System.out.println("\nTie between Player " + players[i].getPlayerName() + 
+								" and Player " + players[j].getPlayerName() + ". " +
+											"We will x10 the score and play another round.\n");
 						sortArray();
+						printPlayerScore();
 						printPlayerOrder();
 						
 						break outer; // restart loop because of first 2 indexes
@@ -337,6 +379,9 @@ public class LadderAndSnake {
 				}
 				// if outer loop is completely iterated, it means no duplicate.
 				if (i == players.length - 1) {
+					System.out.println("\nThe Order of players is set according to their score.");
+					System.out.print("The final ");
+					printPlayerOrder();
 					duplicates = false;  
 				}
 			}
@@ -345,7 +390,7 @@ public class LadderAndSnake {
 		}
 	}
 	
-	public void printPlayerOrder() {
+	public void printPlayerScore() {
 		for (int y = 0; y < players.length; y++) {
 			System.out.println("Player " + players[y].getPlayerName() + "'s score: " + 
 					players[y].getPlayerScore());
@@ -360,6 +405,25 @@ public class LadderAndSnake {
 		      return Integer.compare(b.getPlayerScore(), a.getPlayerScore());
 		    }
 		  });
+	}
+	
+	public void printPlayerOrder() {
+		System.out.print("Order of players: ");
+		for (int i = 0; i < players.length; i++) {
+			if (i == players.length - 1) {
+				System.out.print(players[i].getPlayerName() + ".");
+			}
+			else {
+				System.out.print(players[i].getPlayerName() + ", ");
+			}
+		}
+		System.out.println();
+	}
+	
+	public String toString() {
+		String a = "";
+		// draw map and num of turn
+		return a;
 	}
 	
 //	public void playerOrder(int start, int end) {

@@ -12,7 +12,7 @@ public class PlayLadderAndSnake {
 		// give 4 chances
 		
 		LadderAndSnake game = new LadderAndSnake(4);
-		game.drawBoard();
+		//game.drawBoard();
 		game.play();
 		
 	}
