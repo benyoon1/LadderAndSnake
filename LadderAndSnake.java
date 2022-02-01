@@ -275,24 +275,51 @@ public class LadderAndSnake {
 				System.out.println();
 				numBoard -= 10;
 			}
-			else if (i == 28) {
+//			else if (i == 28) {
+//				System.out.print("  ");
+//				for (int k = 0; k < 10; k++) {
+//					if (playerBoard[k][9] == null) {
+//						System.out.print("        ");
+//					}
+//					else {
+//						System.out.print(playerBoard[k][9] + "      ");
+//					}
+//				}
+//			}
+//			else if (i == 25) {
+//				System.out.print("  ");
+//				for (int k = 0; k < 10; k++) {
+//					if (playerBoard[k][8] == null) {
+//						System.out.print("        ");
+//					}
+//					else {
+//						System.out.print(playerBoard[k][8] + "      ");
+//					}
+//				}
+//			}
+			else {
 				System.out.print("  ");
+				int p = i / 3;
+				
 				for (int k = 0; k < 10; k++) {
-					if (playerBoard[k][9] == null) {
+					if (playerBoard[k][p] == null) {
 						System.out.print("        ");
 					}
 					else {
-						System.out.print(playerBoard[k][9] + "      ");
+						System.out.print(playerBoard[k][p] + "      ");
 					}
 				}
+				System.out.println();
+				
 			}
+			
 //			else if (i == 1) {
 //				System.out.print("\t   \t\t" + "  P3" + "\t\t" + "  P1" + "\t\t" + "  P4");
 //				System.out.println();
 //			}
-			else {
-				System.out.println();
-			}
+//			else {
+//				System.out.println();
+//			}
 			
 		}
 		System.out.println();
