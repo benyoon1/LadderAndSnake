@@ -9,20 +9,20 @@ import java.util.Scanner;
  * Due Date: February 4, 2021
  */
 
-public class LadderAndSnake {
+public class LASBUp {
 	private int numPlayers;
 	private int[][] board = new int[10][10];
 	private int numBoard = 101;
-	private String[][][] playerBoard = new String[10][10][4];
+	private String[][] playerBoard = new String[10][10];
 	private Player[] players;
 	private Player winner;
 	private boolean gameover = false;
 	
-	public LadderAndSnake(int numPlayers) {
+	public LASBUp(int numPlayers) {
 		this.numPlayers = numPlayers;
 	}
 	
-	public LadderAndSnake() {
+	public LASBUp() {
 		this.numPlayers = 2;
 	}
 	
@@ -84,10 +84,9 @@ public class LadderAndSnake {
 		System.out.println();
 		
 		//System.out.println();
-		//printPlayerPosition();
+		printPlayerPosition();
 		
 		drawBoard();
-		//System.out.println(playerBoard[1][9]);
 		resetBoard();
 	}
 	
@@ -190,27 +189,13 @@ public class LadderAndSnake {
 			if (pos > i && pos <= i + 10) {
 				// for 10, 30, 50, 70 ,90
 				if (j % 2 == 1) {
-					for(int k = 0; k < 4; k++) {
-					    if (playerBoard[posOdd][j][k] == null) {
-					    	// ex. for row 21: [pos - (20 + 1)][j] because players move towards right
-					    	playerBoard[posOdd][j][k] = player.getPlayerName();
-					        break;
-					    }
-					}
-					
-					// playerBoard[posOdd][j] = player.getPlayerName();
+					// ex. for row 21: [pos - (20 + 1)][j] because players move towards right
+					playerBoard[posOdd][j] = player.getPlayerName();
 				}
 				// for 20, 40, 60, 80, 100
 				else if (j % 2 == 0) {
-					for(int k = 0; k < 4; k++) {
-					    if (playerBoard[posEven][j][k] == null) {
-					    	// ex. for row 40: [(40 + 10) - pos][j] because players move towards left
-					    	playerBoard[posEven][j][k] = player.getPlayerName();
-					        break;
-					    }
-					}
-					
-					// playerBoard[posEven][j] = player.getPlayerName();
+					// ex. for row 40: [(40 + 10) - pos][j] because players move towards left
+					playerBoard[posEven][j] = player.getPlayerName();
 				}
 			}
 		}
@@ -221,35 +206,30 @@ public class LadderAndSnake {
 	public void printPlayerPosition() {
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
-				for (int k = 0; k < 4; k++) {
-					if (playerBoard[i][j][k] == "P1") {
-						System.out.println("P1 is at: " + i + ", " + j);
-						
-					}
-					if (playerBoard[i][j][k] == "P2") {
-						System.out.println("P2 is at: " + i + ", " + j);
-						
-					}
-					if (playerBoard[i][j][k] == "P3") {
-						System.out.println("P3 is at: " + i + ", " + j);
-						
-					}
-					if (playerBoard[i][j][k] == "P4") {
-						System.out.println("P4 is at: " + i + ", " + j);
-					}
+				if (playerBoard[i][j] == "P1") {
+					System.out.println("P1 is at: " + i + ", " + j);
+					break;
+				}
+				if (playerBoard[i][j] == "P2") {
+					System.out.println("P2 is at: " + i + ", " + j);
+					break;
+				}
+				if (playerBoard[i][j] == "P3") {
+					System.out.println("P3 is at: " + i + ", " + j);
+					break;
+				}
+				if (playerBoard[i][j] == "P4") {
+					System.out.println("P4 is at: " + i + ", " + j);
+					break;
 				}
 			}
 		}
-		System.out.println();
-		System.out.println();
 	}
 	
 	public void resetBoard() {
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
-				for (int k = 0; k < 4; k++) {
-					playerBoard[i][j][k] = null;
-				}
+				playerBoard[i][j] = null;
 			}
 		}
 	}
@@ -277,51 +257,19 @@ public class LadderAndSnake {
 			}
 
 			else {
-				//System.out.print("  ");
+				System.out.print("  ");
 				int p = i / 3;
 				
 				for (int k = 0; k < 10; k++) {
-					if (playerBoard[k][p][0] == null) {
-						System.out.print("\t");
+					if (playerBoard[k][p] == null) {
+						System.out.print("        ");
 					}
-					else if (playerBoard[k][p][3] != null) {
-						if ((i - 1) % 3 == 0) {
-							System.out.print("  " + playerBoard[k][p][0] + "," + playerBoard[k][p][1] + "\t");
-						}
-						if ((i - 2) % 3 == 0) {
-							System.out.print("  " + playerBoard[k][p][2] + "," + playerBoard[k][p][3] + "\t");
-						}
-						else {
-							System.out.print("\t");
-						}
+					else if ((i - 1) % 3 == 0) {
+						System.out.print(playerBoard[k][p] + "      ");
 					}
-					else if (playerBoard[k][p][2] != null) {
-						if ((i - 1) % 3 == 0) {
-							System.out.print("  " + playerBoard[k][p][0] + "," + playerBoard[k][p][1] + "\t");
-						}
-						if ((i - 2) % 3 == 0) {
-							System.out.print("  " + playerBoard[k][p][2] + "\t");
-						}
-						else {
-							System.out.print("\t");
-						}
-					}
-					else if (playerBoard[k][p][1] != null) {
-						if ((i - 1) % 3 == 0) {
-							System.out.print("  " + playerBoard[k][p][0] + "," + playerBoard[k][p][1] + "\t");
-						}
-						else {
-							System.out.print("\t");
-						}
-					}
-					else if (playerBoard[k][p][0] != null) {
-						if ((i - 1) % 3 == 0) {
-							System.out.print("  " + playerBoard[k][p][0] + "\t");
-						}
-						else {
-							System.out.print("\t");
-						}
-					}
+//					else {
+//						System.out.println();
+//					}
 				}
 				System.out.println();
 				
@@ -329,7 +277,6 @@ public class LadderAndSnake {
 			
 		}
 		System.out.println();
-		//System.out.println(playerBoard[1][9] == null);
 	}
 	
 	
