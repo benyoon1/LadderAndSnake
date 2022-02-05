@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Name and ID: Chul Bin YOON 40197998
  * COMP249
  * Assignment # 1
- * Due Date: February 4, 2021
+ * Due Date: February 7, 2021
  */
 
 public class LadderAndSnake {
@@ -18,14 +18,25 @@ public class LadderAndSnake {
 	private Player winner;
 	private boolean gameover = false;
 	
+	/**
+	 * Constructor which determines the number of players. 
+	 * Minimum of 2 and maximum of 4.
+	 * @param numPlayers number of players
+	 */
 	public LadderAndSnake(int numPlayers) {
 		this.numPlayers = numPlayers;
 	}
 	
+	/**
+	 * Default constructor - 2 players
+	 */
 	public LadderAndSnake() {
 		this.numPlayers = 2;
 	}
 	
+	/**
+	 * Creates Player object with initial dice scores to determine the playing order.
+	 */
 	public void createPlayers() {
 		if (numPlayers == 4) {
 			players = new Player[4];
@@ -40,20 +51,6 @@ public class LadderAndSnake {
 			players[1] = new Player("P2", flipDice());
 			players[2] = new Player("P3", flipDice());
 		}
-		
-		// test purposes
-		else if (numPlayers == 8) {
-			players = new Player[8];
-			players[0] = new Player("P1", flipDice());
-			players[1] = new Player("P2", flipDice());
-			players[2] = new Player("P3", flipDice());
-			players[3] = new Player("P4", flipDice());
-			players[4] = new Player("P5", flipDice());
-			players[5] = new Player("P6", flipDice());
-			players[6] = new Player("P7", flipDice());
-			players[7] = new Player("P8", flipDice());
-			
-		}
 		else {
 			players = new Player[2];
 			players[0] = new Player("P1", flipDice());
@@ -61,11 +58,23 @@ public class LadderAndSnake {
 		}
 	}
 	
+	/**
+	 * Flips dice.
+	 * @return random number between 1 and 6
+	 */
 	public static int flipDice() {
 		return (int)(Math.random() * 6 + 1);
 	}
 	
-	
+	/**
+	 * Flips dice for every player and move their position according to their values.
+	 * Also sets player in a separate 3D array called playerBoard, in order to print
+	 * their position along 2D array called board.
+	 * Also checks if player is at 100, if so, announce winner and end game.
+	 * Then finally, draws game board and resets playerBoard array.
+	 * 
+	 * @param players Player object array
+	 */
 	public void flipPlayers(Player[] players) {
 		for (int i = 0; i < players.length; i++) {
 			int diceValue = flipDice();
@@ -83,25 +92,26 @@ public class LadderAndSnake {
 		}
 		System.out.println();
 		
-		//System.out.println();
-		//printPlayerPosition();
-		
 		drawBoard();
-		//System.out.println(playerBoard[1][9]);
-		resetBoard();
+		resetPlayerBoard();
 	}
 	
+	/**
+	 * Moves player according to their dice value.
+	 * If player steps on a ladder or a snake, set position accordingly 
+	 * and print message. 
+	 * @param player Player object
+	 * @param diceValue dice value
+	 */
 	public void movePlayer(Player player, int diceValue) {
 		
 		player.setPosition(player.getPosition() + diceValue);
 		
-		// 101 -> 99 : 101 ... = 99 => 101 + 99 = 200 => 200 - 101 = 99
-		// 104 -> 96 : 104 ... = 96 => 104 + 96 = 200 => 200 - 104 = 96
+		// if player position exceeds 100
 		if (player.getPosition() > 100) {
 			player.setPosition(200 - player.getPosition());
-			//System.out.print("back to square " + player.getPosition());
 		}
-		// Ladder
+		// Ladders
 		if (player.getPosition() == 1) {
 			player.setPosition(38);
 			System.out.print("gone to square 1 then up to square 38");
@@ -138,7 +148,7 @@ public class LadderAndSnake {
 			player.setPosition(100);
 			System.out.print("gone to square 80 then up to square 100");
 		}
-		// Snake
+		// Snakes
 		else if (player.getPosition() == 16) {
 			player.setPosition(6);
 			System.out.print("gone to square 16 then down to square 6");
@@ -178,18 +188,39 @@ public class LadderAndSnake {
 		System.out.println();
 	}
 	
+	/**
+	 * Sets player in 3D playerBoard.
+	 * Since the board is composed of 2 rows; left and right directions, 
+	 * we need two formulas to calculate the appropriate playerBoard value 
+	 * for each player's position.
+	 * 
+	 * PlayerBoard's array values are set according to their position in the map.
+	 * Ex: 100 is [0][0], 1 is [0][9] and 10 is [9][9].
+	 * 
+	 * i starts with rows from 1-10 until 90-100.
+	 * i is the tens value in a given position, from bottom to top.
+	 * 
+	 * j starts with rows from 100-91 until 1-10.
+	 * j is the tens value in a given position, from top to bottom.
+	 * 
+	 * k serves to show players that are in the same tile.
+	 * 
+	 * If a given row is a right direction, posOdd is the ones value in a given position.
+	 * If a given row is a left direction, posEven is the ones value in a given position.
+	 * 
+	 * @param player
+	 */
 	public void setPlayer(Player player) {
 		int pos = player.getPosition(); 
 		int posOdd;
 		int posEven;
-		//resetBoard();
+		
 		for (int i = 0, j = 9; j >= 0; i += 10, j--) {
 			posOdd = pos - (i + 1);
 			posEven = i + 10 - pos;
-			// ex. if pos > 10 && pos <= 20
-			if (pos > i && pos <= i + 10) {
-				// for 10, 30, 50, 70 ,90
-				if (j % 2 == 1) {
+			
+			if (pos > i && pos <= i + 10) {  // ex. if pos > 10 && pos <= 20 for row 10
+				if (j % 2 == 1) { // for rows 1, 21, 41, 61 and 81
 					for(int k = 0; k < 4; k++) {
 					    if (playerBoard[posOdd][j][k] == null) {
 					    	// ex. for row 21: [pos - (20 + 1)][j] because players move towards right
@@ -197,11 +228,8 @@ public class LadderAndSnake {
 					        break;
 					    }
 					}
-					
-					// playerBoard[posOdd][j] = player.getPlayerName();
 				}
-				// for 20, 40, 60, 80, 100
-				else if (j % 2 == 0) {
+				else if (j % 2 == 0) { // for rows 20, 40, 60, 80 and 100
 					for(int k = 0; k < 4; k++) {
 					    if (playerBoard[posEven][j][k] == null) {
 					    	// ex. for row 40: [(40 + 10) - pos][j] because players move towards left
@@ -209,15 +237,15 @@ public class LadderAndSnake {
 					        break;
 					    }
 					}
-					
-					// playerBoard[posEven][j] = player.getPlayerName();
 				}
 			}
 		}
 		
 	}
 	
-	// test purpose
+	/**
+	 * Prints player array value in playerBoard array.
+	 */
 	public void printPlayerPosition() {
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
@@ -244,7 +272,10 @@ public class LadderAndSnake {
 		System.out.println();
 	}
 	
-	public void resetBoard() {
+	/**
+	 * Sets all values in playerBoard array to null.
+	 */
+	public void resetPlayerBoard() {
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
 				for (int k = 0; k < 4; k++) {
@@ -254,10 +285,23 @@ public class LadderAndSnake {
 		}
 	}
 	
+	/**
+	 * Draws game board in console.
+	 * There are 30 lines in total that are reserved for the game board.
+	 * For each line, this method checks the conditions and prints appropriate 
+	 * string.
+	 * It starts with 100-91 row, then players row if there are any, 
+	 * then lastly 1-10 row.
+	 * To print player position, the method checks if given array value is null.
+	 * If so, print tab. If not, it prints players in its tile.
+	 */
 	public void drawBoard() {
 		numBoard = 101;
+		
+		System.out.println("\n\n--------------------------------Game Board-----------------------------------\n\n");
+		
 		for (int i = 0; i < 30; i++) {
-			if (i % 6 == 0) {
+			if (i % 6 == 0) { // for rows 20, 40, 60, 80 and 100 
 				for (int j = 0; j < 10; j++) {
 					board[i/3][j] = j + 1;
 					System.out.print(numBoard - board[i/3][j] + "\t");
@@ -266,7 +310,7 @@ public class LadderAndSnake {
 				System.out.println();
 				numBoard -= 10;
 			}
-			else if ((i - 3) % 6 == 0) {
+			else if ((i - 3) % 6 == 0) { // for rows 1, 21, 41, 61 and 81
 				for (int j = 10; j > 0; j--) {
 					board[i/3][j - 1] = j;
 					System.out.print(numBoard - board[i/3][j - 1] + "\t");
@@ -277,7 +321,6 @@ public class LadderAndSnake {
 			}
 
 			else {
-				//System.out.print("  ");
 				int p = i / 3;
 				
 				for (int k = 0; k < 10; k++) {
@@ -328,11 +371,13 @@ public class LadderAndSnake {
 			}
 			
 		}
-		System.out.println();
-		//System.out.println(playerBoard[1][9] == null);
+		System.out.println("\n-----------------------------------------------------------------------------\n\n");
 	}
 	
-	
+	/**
+	 * Initiates core engine of the game.
+	 * Also prompts user to continue for each turn.
+	 */
 	public void play() {
 		printWelcomeMessage();
 		createPlayers();
@@ -349,38 +394,44 @@ public class LadderAndSnake {
 				break;
 			}
 			else {
-				System.out.println("\n\nTurn " + ++count + ":\n");
-				//drawBoard();
-				//System.out.println();
+				System.out.println("\n\n-------------------------------------------------------------------");
+				System.out.println("Turn " + ++count + ":\n");
 				flipPlayers(players);
-				//checkPosition(players);
 			}
 		}
 		
 		System.out.println("Game Over! Thanks for playing!");
 		
 		keyIn.close();
-		// 1.determine order of turns
-		// Player( P4,p2,p1,p3)
 
 	}
 	
-	
+	/**
+	 * Announces winner of the game.
+	 */
 	public void announceWinner() {
 		System.out.println("\nWinner is: " + winner.getPlayerName());
 		gameover = true;
 	}
 	
+	/**
+	 * Prints welcome message.
+	 */
 	public void printWelcomeMessage() {
+		System.out.println("\n\n");
 		System.out.println("--------------------------------------------------------");
 		System.out.println("      Welcome to Ladder and Snake Game!");
-		System.out.println("--------------------------------------------------------");
+		System.out.println("--------------------------------------------------------\n");
 	}
 	
-	
-	
-	
-	// Determine Order of players
+	/**
+	 * Determines order of players at start.
+	 * This method sorts players at first with their initial score created in constructor.
+	 * If duplicates are found, it multiplies the score by 10 and adds a new dice score.
+	 * Then, outer loop is broken and starts loop again from 0.
+	 * This process is repeated until no more duplicates are found.
+	 * Player array is sorted according to its score. 
+	 */
 	public void playerOrder() {
 		boolean duplicates = true;
 		
@@ -388,7 +439,6 @@ public class LadderAndSnake {
 		printPlayerScore();
 		sortArray();
 		printPlayerOrder();
-		//printPlayerScore();
 		
 		while (duplicates) {
 			outer:
@@ -407,11 +457,11 @@ public class LadderAndSnake {
 						printPlayerScore();
 						printPlayerOrder();
 						
-						break outer; // restart loop because of first 2 indexes
+						break outer;
 					}
 					
 				}
-				// if outer loop is completely iterated, it means no duplicate.
+				// if outer loop is completely iterated, it means no duplicate
 				if (i == players.length - 1) {
 					System.out.println("\nThe Order of players is set according to their score.");
 					System.out.print("The final ");
@@ -419,11 +469,12 @@ public class LadderAndSnake {
 					duplicates = false;  
 				}
 			}
-			
-			//printPlayerOrder();
 		}
 	}
 	
+	/**
+	 * Prints player score for player order.
+	 */
 	public void printPlayerScore() {
 		for (int y = 0; y < players.length; y++) {
 			System.out.println("Player " + players[y].getPlayerName() + "'s score: " + 
@@ -432,6 +483,9 @@ public class LadderAndSnake {
 		System.out.println();
 	}
 	
+	/**
+	 * Sorts Player array according to their score.
+	 */
 	public void sortArray() {
 		Arrays.sort(players, 0, players.length, new Comparator<Player>() {
 		    @Override 
@@ -441,6 +495,9 @@ public class LadderAndSnake {
 		  });
 	}
 	
+	/**
+	 * Prints player order.
+	 */
 	public void printPlayerOrder() {
 		System.out.print("Order of players: ");
 		for (int i = 0; i < players.length; i++) {
@@ -454,51 +511,21 @@ public class LadderAndSnake {
 		System.out.println();
 	}
 	
+	/**
+	 * Prints number of players.
+	 */
 	public String toString() {
-		String a = "";
-		// draw map and num of turn
-		return a;
+		return "Number of players are: " + numPlayers;
 	}
 	
-//	public void playerOrder(int start, int end) {
-//		
-//		
-//		Arrays.sort(players, 0, players.length, new Comparator<Player>() {
-//		    @Override public int compare(Player a, Player b) {
-//		      return Integer.compare(b.getPlayerScore(), a.getPlayerScore());
-//		    }
-//		  });
-//		
-
-//		
-//		int i = start;
-//		  while (i < end) {
-//		    // Try to find a "run" of players with the same number.
-//		    int runStart = i;
-//		    int diceNumberRolled = players[runStart].getPlayerScore();
-//		    ++i;
-//		    while (i < end && players[i].getPlayerScore() == diceNumberRolled) {
-//		      ++i;
-//		    }
-//
-//		    if (i - runStart > 1) {
-//		      // We have found more than one player with the same dice number.
-//		      // Get all of the players with that dice number to roll again.
-//		      playerOrder(runStart, i);
-//		    }
-//		  }
-//		  System.out.println();
-//			System.out.println(players[0].getPlayerScore());
-//			System.out.println(players[1].getPlayerScore());
-//			System.out.println(players[2].getPlayerScore());
-//			System.out.println(players[3].getPlayerScore());
-//		
-//	}
+	/**
+	 * Checks if two LadderAndSnake objects are equal.
+	 * @param LAS LadderAndSnake object
+	 * @return true if both playerBoard array is equal
+	 */
+	public boolean equals(LadderAndSnake LAS) {
+		return Arrays.deepEquals(playerBoard, LAS.playerBoard);
+	}
 
 }
 
-//class SortbyRoll implements Comparator<Player> {
-//	public int compare(Player a, Player b) {
-//		return a.getPlayerScore() - b.getPlayerScore();
-//	}
-//}

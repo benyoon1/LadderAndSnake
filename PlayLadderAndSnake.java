@@ -4,11 +4,16 @@ import java.util.Scanner;
  * Name and ID: Chul Bin YOON 40197998
  * COMP249
  * Assignment # 1
- * Due Date: February 4, 2021
+ * Due Date: February 7, 2021
  */
 
 public class PlayLadderAndSnake {
 
+	/**
+	 * This program prompts user for number of players in the game
+	 * and initiates Ladder and Snake game.
+	 * @param args args not used.
+	 */
 	public static void main(String[] args) {
 		int attempt = 0;
 		boolean attemptLoop = true;
